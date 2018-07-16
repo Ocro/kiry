@@ -190,7 +190,7 @@ public class Kiry extends Controller {
     }
   }
 
-  public static Result index(int list) {
+  public Result index(int list) {
     List<? extends ContainGame> gamesToShow;
     String email = session("email");
     switch (list) {
@@ -233,17 +233,17 @@ public class Kiry extends Controller {
     return ordoredView;
   }
 
-  public static Result welcome() {
+  public Result welcome() {
     return ok(welcome.render(User.findByEmail(session("email")),
         getDefaultView(), getOrdoredView()));
   }
 
-  public static Result newgame() {
+  public Result newgame() {
     return ok(newgame.render(form(AddNewGame.class), getPlatformOptions(),
         getDefaultView(), getOrdoredView()));
   }
 
-  public static Result addNewGame() {
+  public Result addNewGame() {
     Form<AddNewGame> addNewGame = form(AddNewGame.class).bindFromRequest();
     if (addNewGame.hasErrors()) {
       return badRequest(newgame.render(addNewGame, getPlatformOptions(),
@@ -279,17 +279,17 @@ public class Kiry extends Controller {
     return views.html.helper.options.apply(m);
   }
 
-  public static Result setDefaultView(Boolean enable) {
+  public Result setDefaultView(Boolean enable) {
     response().setCookie("defaultView", String.valueOf(enable), 2592000);
     return redirectReferer();
   }
 
-  public static Result setOrdoredView(Boolean enable) {
+  public Result setOrdoredView(Boolean enable) {
     response().setCookie("ordoredView", String.valueOf(enable), 2592000);
     return redirectReferer();
   }
 
-  private static Result redirectReferer() {
+  private Result redirectReferer() {
     String returnUrl = request().getHeader("referer");
     if (returnUrl == null)
       return redirect(routes.Kiry.index(2));
@@ -300,7 +300,7 @@ public class Kiry extends Controller {
     return email.equals(session("email"));
   }
 
-  public static Result addWishGame(String email, long game) {
+  public Result addWishGame(String email, long game) {
     if (!actionPermitted(email))
       flash("error", UNAUTHORIZED_ACTION);
     else
@@ -314,7 +314,7 @@ public class Kiry extends Controller {
     return redirectReferer();
   }
 
-  public static Result addOwnGame(String email, long game) {
+  public Result addOwnGame(String email, long game) {
     if (!actionPermitted(email))
       flash("error", UNAUTHORIZED_ACTION);
     else
@@ -328,7 +328,7 @@ public class Kiry extends Controller {
     return redirectReferer();
   }
 
-  public static Result addIgnoredGame(String email, long game) {
+  public Result addIgnoredGame(String email, long game) {
     if (!actionPermitted(email))
       flash("error", UNAUTHORIZED_ACTION);
     else
@@ -342,7 +342,7 @@ public class Kiry extends Controller {
     return redirectReferer();
   }
 
-  public static Result removeWishGame(String email, long game) {
+  public Result removeWishGame(String email, long game) {
     if (!actionPermitted(email))
       flash("error", UNAUTHORIZED_ACTION);
     else
@@ -355,7 +355,7 @@ public class Kiry extends Controller {
     return redirectReferer();
   }
 
-  public static Result removeOwnGame(String email, long game) {
+  public Result removeOwnGame(String email, long game) {
     if (!actionPermitted(email))
       flash("error", UNAUTHORIZED_ACTION);
     else
@@ -368,7 +368,7 @@ public class Kiry extends Controller {
     return redirectReferer();
   }
 
-  public static Result removeIgnoredGame(String email, long game) {
+  public Result removeIgnoredGame(String email, long game) {
     if (!actionPermitted(email))
       flash("error", UNAUTHORIZED_ACTION);
     else
@@ -381,7 +381,7 @@ public class Kiry extends Controller {
     return redirectReferer();
   }
 
-  public static Result archivedGame(String email, long game) {
+  public Result archivedGame(String email, long game) {
     if (!actionPermitted(email))
       flash("error", UNAUTHORIZED_ACTION);
     else
@@ -394,7 +394,7 @@ public class Kiry extends Controller {
     return redirectReferer();
   }
 
-  public static Result removearchived(String email, long game) {
+  public Result removearchived(String email, long game) {
     if (!actionPermitted(email))
       flash("error", UNAUTHORIZED_ACTION);
     else
@@ -407,7 +407,7 @@ public class Kiry extends Controller {
     return redirectReferer();
   }
   
-  public static Document getLocalGameList(String search) {
+  public Document getLocalGameList(String search) {
     Document doc = DocumentFactory.createNewDocument();
     Element data = doc.createElement("Data");
     doc.appendChild(data);
@@ -449,7 +449,7 @@ public class Kiry extends Controller {
     }
   }
 
-  public static Result getGameList() {
+  public Result getGameList() {
     Map<String, String[]> datas = request().body().asFormUrlEncoded();
     Document doc = null;
     String search = datas.get("search")[0],
@@ -472,7 +472,7 @@ public class Kiry extends Controller {
     return ok(DocumentFactory.documentToString(doc));
   }
 
-  public static Result getGameInfo(String game) {
+  public Result getGameInfo(String game) {
     try {
       long id = Long.parseLong(game);
       String content = UrlReader.read(PREFIX_GET_GAME_ID + id);
@@ -482,7 +482,7 @@ public class Kiry extends Controller {
     }
   }
 
-  public static Result importFront() {
+  public Result importFront() {
 
     for (Game game : Game.findAll()) {
       if (game.idgamedb == null)
@@ -498,7 +498,7 @@ public class Kiry extends Controller {
         InfoFrontExtractor.getInstance());
   }
 
-  public static Result importScreenShot() {
+  public Result importScreenShot() {
 
     for (Game game : Game.findAll()) {
       if (game.idgamedb == null)
@@ -515,7 +515,7 @@ public class Kiry extends Controller {
         InfoScreenshotExtractor.getInstance());
   }
 
-  public static Result importFanart() {
+  public Result importFanart() {
 
     for (Game game : Game.findAll()) {
       if (game.idgamedb == null)
@@ -525,14 +525,14 @@ public class Kiry extends Controller {
     return redirectReferer();
   }
 
-  public static void importFanartGame(Game game) {
+  public void importFanartGame(Game game) {
     WebContentDownloader.downloadContent(PREFIX_GET_ARTS + game.idgamedb,
         FANART_FOLDER + SEPARATOR + String.valueOf(game.id) + 
         SEPARATOR, "", ".jpg",
         InfoFanartExtractor.getInstance());
   }
 
-  public static Long importGame(long id) 
+  public Long importGame(long id) 
       throws DOMException, ParseException, ParserConfigurationException, 
              SAXException, IOException {
     
@@ -613,7 +613,7 @@ public class Kiry extends Controller {
     return -1L;
   }
 
-  public static Result importPlatform() {
+  public Result importPlatform() {
     try {
       DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory
           .newInstance();
@@ -657,11 +657,11 @@ public class Kiry extends Controller {
     }
   }
 
-  public static Result getGenresList() {
+  public Result getGenresList() {
     return ok(listToString(Genre.getStringList()));
   }
 
-  public static Result getCompagniesList() {
+  public Result getCompagniesList() {
     return ok(listToString(Compagny.getStringList()));
   }
 
@@ -679,7 +679,7 @@ public class Kiry extends Controller {
     return User.findByEmail(session("email"));
   }
 
-  public static Result gameDetails(Long id) {
+  public Result gameDetails(Long id) {
     String suffix = SEPARATOR + String.valueOf(id) + SEPARATOR + "original",
            email = getLoggedUser().email;
     int countScreenshots = 0, 
@@ -712,7 +712,7 @@ public class Kiry extends Controller {
         countFanarts));
   }
 
-  public static Result gameDetailsDb(Long id) {
+  public Result gameDetailsDb(Long id) {
     try {
       return redirect(routes.Kiry.gameDetails(importGame(id)));
     } catch (DOMException | ParseException | ParserConfigurationException
@@ -761,7 +761,7 @@ public class Kiry extends Controller {
     return path.substring(path.lastIndexOf("."));
   }
 
-  public static Result uploadBoxArt() {
+  public Result uploadBoxArt() {
     Http.MultipartFormData multipartFormData = request().body()
         .asMultipartFormData();
     FilePart picture = multipartFormData.getFile("file");
@@ -794,7 +794,7 @@ public class Kiry extends Controller {
     }
   }
 
-  public static Result updateWishFrom() {
+  public Result updateWishFrom() {
     DynamicForm requestData = form().bindFromRequest();
 
     String email = requestData.get("email");

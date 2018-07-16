@@ -53,7 +53,7 @@ public class Application extends Controller {
     }
   }
 
-  public static Result login() {
+  public Result login() {
     Http.Cookie rememberme = request().cookies().get("rememberme");
 
     if (rememberme != null && rememberme.value() != "") {
@@ -63,7 +63,7 @@ public class Application extends Controller {
     return ok(login.render(form(Login.class)));
   }
 
-  public static Result authenticate() {
+  public Result authenticate() {
     Form<Login> loginForm = form(Login.class).bindFromRequest();
     if (loginForm.hasErrors()) {
       return badRequest(login.render(loginForm));
@@ -75,11 +75,11 @@ public class Application extends Controller {
     }
   }
 
-  public static Result subscribe() {
+  public Result subscribe() {
     return ok(subscribe.render(form(CreateAccount.class)));
   }
 
-  public static Result createAccount() {
+  public Result createAccount() {
     Form<CreateAccount> createAccountForm = form(CreateAccount.class)
         .bindFromRequest();
     if (createAccountForm.hasErrors()) {
@@ -109,7 +109,7 @@ public class Application extends Controller {
   /**
    * Logout and clean the session.
    */
-  public static Result logout() {
+  public Result logout() {
     session().clear();
     response().discardCookie("rememberme");
     flash("success", "You've been logged out");

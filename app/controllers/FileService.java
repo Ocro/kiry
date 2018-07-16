@@ -8,7 +8,7 @@ import play.mvc.Result;
 public class FileService extends Controller {
   static String path = "public/";
 
-  public static Result getFile(String file) {
+  public Result getFile(String file) {
     File myfile = new File(path + file);
     return ok(myfile);
   }

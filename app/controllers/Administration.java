@@ -25,14 +25,14 @@ public class Administration extends Controller {
     }
   }
 
-  public static Result index() {
+  public Result index() {
     if (Secured.isAdmin())
       return ok(administration.render(form(FormCleanGame.class)));
     else
       return forbidden();
   }
   
-  public static Result cleanGame() {
+  public Result cleanGame() {
     if (!Secured.isAdmin())
       return forbidden();
     
