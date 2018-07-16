@@ -1,0 +1,36 @@
+@(formCleanGame: Form[Administration.FormCleanGame])
+
+@import helper._
+@implicitField = @{ FieldConstructor(helperformAddGame.f) }
+
+@main("Administration") {
+  @helper.form(
+    routes.Administration.cleanGame, 
+    'id -> "form-clean-game",
+    'class -> "form-clean-game w200p ma2 pa1 mt3") {
+
+    @if(formCleanGame.hasGlobalErrors) {
+      <p class="error">
+        @formCleanGame.globalError.message
+      </p>
+    }
+
+    @inputText(
+      formCleanGame("email"),
+      '_label -> "Email De",
+      'placeholder -> "Email De",
+      'type -> "text")
+
+    @inputText(
+      formCleanGame("fromID"),
+      '_label -> "ID De",
+      'placeholder -> "ID De",
+      'type -> "text")
+
+      <input type="submit" value="Nettoyer les jeux">
+  }
+
+  <a href="/importFront">importer les front boxart</a><br>
+  <a href="/importFanart">importer les fanarts</a><br>
+  <a href="/importScreenShot">importer les screenshots</a>
+}

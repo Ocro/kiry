@@ -1,0 +1,8 @@
+@(elements: helper.FieldElements)
+
+<div class="@if(elements.hasErrors) {error} mb1">
+  @elements.input
+  @if(elements.hasErrors) {
+    <span class="phone-hidden">@elements.errors.map(i => Messages(i)).mkString(", ")</span>
+  }
+</div>

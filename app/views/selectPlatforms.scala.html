@@ -1,0 +1,5 @@
+@(formAddGame: Form[Kiry.AddNewGame], id: String, platformOptions: Seq[(String, String)])
+@import helper._
+@implicitField = @{ FieldConstructor(formCustom.f) }
+
+@select(formAddGame(id), options = platformOptions)

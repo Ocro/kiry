@@ -1,0 +1,36 @@
+@(listGames: List[_ <: utils.ContainGame], typeList: Integer = 0)
+
+@main("Accueil") {
+  <section class="flex display-list-game">
+    <section>
+      <!-- Section pour liste vide -->
+      <section style="display:@if(listGames.size == 0){block}else{none};">
+        <img src="@routes.Assets.at("images/empty-list.png")"
+             alt="empty list">
+        <span>°°° Cette liste est vide</span>
+      </section>
+      <!-- Lien pour les jeux archivés -->
+      @if(typeList == 1){
+        <a href="@routes.Kiry.index(5)" title="Voir les jeux archivés">Archives</a>
+      }
+      <!-- Liste des jeux (selon filtre) -->
+      @if(listGames.size > 0){
+      <section id="list-user-game">
+        @listGames.map { game =>
+        <a href="@routes.Kiry.gameDetails(game.getGame.id)"
+           id-game-db="@game.getGame.idgamedb"
+           id-game="@game.getGame.id"
+           platform="@game.getGame.platform.name"
+           title="@game.getGame.gametitle"
+           class="ma1 tiny-ma5">
+          <img src="@routes.Assets.at("images/img-transparent.gif")"
+               class="lazy"
+               data-src="@routes.FileService.getFile("images/games/front/"+game.getGame.id+".jpg")">
+        </a>
+        }
+      </section>
+      }
+    </section>
+  </section>
+}
+<script src='@routes.Assets.at("javascripts/index.js")' type='text/javascript'></script>

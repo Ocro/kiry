@@ -1,0 +1,142 @@
+@(game: Game, 
+  frontExists: Boolean, 
+  listBtns: List[controllers.Kiry.ButtonAddListConcrete],
+  listGamesWithoutState: List[Game],
+  listGamesWishes: List[Game],
+  listUserWishGames: List[Game],
+  listUserOwnGames: List[Game],
+  countScreenshots: Integer,
+  countFanarts: Integer)
+@import helper._
+
+
+@main(game.gametitle) {
+  <section class="w960p center">
+    <nav class="mt3 nowrap no-overflow tiny-hidden left-menu" id="left-menu">
+      <h1>Catégories</h1>
+      <a class="info-2-16" href="#infos" class="current">Information</a>
+      <a class="video-camera-3-16" href="#videos">Vidéos</a>
+      <a class="instagram-16" href="#screenshots">Screenshot</a>
+      <a class="favorite-5-16" href="#fanarts">Fanarts</a>
+      <a class="edit-7-16" href="#commentaries">Commentaires</a>
+      <a class="arrow-55-16" href="#related">Jeux similaires</a>
+    </nav>
+    <nav class="mt3 nowrap tiny-hidden left-menu left-second-menu">
+      @if(listUserWishGames.length > 0) {
+        <h1>Désirés</h1>
+        @listUserWishGames.map { game =>
+          <a href="@routes.Kiry.gameDetails(game.id)"
+             title="@game.gametitle - @game.platform.name">
+            @game.getTruncatedGameTitle(22)
+          </a>
+        }
+      }
+      @if(listUserOwnGames.length > 0) {
+      <h1>Possédés</h1>
+        @listUserOwnGames.map { game =>
+          <a href="@routes.Kiry.gameDetails(game.id)"
+             title="@game.gametitle - @game.platform.name">
+            @game.getTruncatedGameTitle(22)
+          </a>
+        }
+      }
+    </nav>
+    <section class="ma1 w800p details-game-border">
+      <nav class="right  w200p nowrap no-overflow small-hidden">
+        @views.html.listgameunrated(game, listGamesWithoutState)
+        <br>
+        @views.html.listgamewishes(game, listGamesWishes)
+      </nav>
+      <section id="infos" class="category">
+        <h1 class="nowrap">@game.gametitle</h1>
+        <nav>
+          @listBtns.map { btn =>
+          <a href="@btn.getUrl(game.id)"
+             title="@btn.getTitle()"
+             class="@btn.getCssClass()">
+          </a>
+          }
+        </nav>
+        <section class="flex flex-h">
+          @form(action = routes.Kiry.uploadBoxArt, 
+                'id -> "form-boxart-front",
+                'enctype -> "multipart/form-data",
+                'class -> "tiny-w50 front-max-width") {
+            <section id="boxart-front">
+            @if(frontExists) {
+              <img class="lazy" 
+                  src="@routes.Assets.at("images/img-transparent.gif")"
+                  data-src="@routes.FileService.getFile("images/games/front/"+game.id+".jpg")" alt="Front">
+            } else {
+              <div class="w200p no-front-boxart txtcenter">
+                <div class="h4-like">Aucune jaquette</div>
+                <div>cliquez ici ou glissez une image pour l'ajouter</div>
+              </div>
+              <input type="file" id="file-boxart-front" name="file-boxart-front" />
+              <input type="hidden" id="id-game" name="id-game" value="@game.id" />
+            }
+            </section>
+          }
+          <section id="infos-game" class="ml2">
+            <section id="rating" class="rating txtcenter pt1 mb2">
+              <section>@game.rating</section>
+              <section>100</section>
+            </section>
+            @game.platform.name<br>
+            @if(game.releasedate != null) { 
+              @game.releasedate.format("dd MMMM yyyy")<br> }
+            @if(game.developer != null) {
+              @game.developer.name<br>
+            }
+            @if(game.publisher != null) {
+              @game.publisher.name<br>
+            }
+            <section>
+              @game.genres.map { genre => <span class="genre">@genre.name</span> }
+            </section>
+          </section>
+        </section>
+      </section>
+      <section id="videos" class="category" >
+        <h1>Vidéos</h1>
+        @if(game.getYoutubeEmbed() != "") {
+        <iframe width="100%" height="315" src="@game.getYoutubeEmbed()" 
+                class="mt2" frameborder="0" allowfullscreen></iframe>}
+      </section>
+      <section id="screenshots" class="category">
+        <h1>Screenshots</h1>
+        <ul class="images-game flex flex-h">
+          @for(i <- 0 to countScreenshots-1) {
+            <li>
+              <img class="lazy" alt="screenshot" 
+                   src="@routes.Assets.at("images/img-transparent.gif")"
+                   data-src="@routes.FileService.getFile(
+                   "images/games/screenshot/" + game.id + "/thumbs/" + i + ".jpg")" >
+          }
+        </ul>
+      </section>
+      <section id="fanarts" class="category">
+        <h1>Fanarts</h1>
+        <ul class="images-game flex flex-h">
+          @for(i <- 0 to countFanarts-1) {
+            <li>
+              <img class="lazy" alt="fanart"
+                  src="@routes.Assets.at("images/img-transparent.gif")"
+                  data-src="@routes.FileService.getFile(
+                  "images/games/fanart/" + game.id + "/thumbs/" + i + ".jpg")" >
+          }
+        </ul>
+      </section>
+      <section id="commentaries" class="category">
+        <h1>Commentaire</h1>
+      </section>
+      <section id="related" class="category">
+        <h1>Jeux associés</h1>
+      </section>
+    </section>
+  </section>
+}
+<script>
+  var frontPath = "@routes.FileService.getFile("images/games/front/"+game.id+".jpg")";
+</script>
+<script src='@routes.Assets.at("javascripts/game-details.js")' type='text/javascript'></script>

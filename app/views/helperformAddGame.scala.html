@@ -1,0 +1,11 @@
+@(elements: helper.FieldElements)
+
+<div class="@if(elements.hasErrors) {error} mb1">
+  @if(elements.label != "") {
+    <label for="@elements.id" class="blk">@elements.label</label>
+  }
+  @elements.input
+  @if(elements.hasErrors) {
+    <span class="phone-hidden">@elements.errors.map(i => Messages(i)).mkString(", ")</span>
+  }
+</div>

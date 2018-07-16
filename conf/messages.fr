@@ -1,0 +1,2 @@
+error.required='Ce champ est requis'
+error.invalid='Veuillez entrer une valeur valide'

@@ -1,0 +1,51 @@
+@(formLogin: Form[Application.Login])
+@import helper._
+@implicitField = @{ FieldConstructor(formCustom.f) }
+<html>
+  <head>
+    <title>Connexion à Kiry</title>
+    <meta name="viewport" content="width=device-width">
+
+    <!-- Feuilles de style -->
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/knacss.css")">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+
+    <!-- Scripts -->
+    <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
+  </head>
+  <body class="tiny-background">
+    <section class="center mt2 block-text  w350p">
+      @helper.form(routes.Application.authenticate) {
+        <div>
+          <h1 class="left mb1">Se connecter</h1>
+          <img src="@routes.Assets.at("images/game-48.png")"
+               title="logo"
+               class="right mt1">
+        </div>
+        @inputText(
+          formLogin("email"),
+          'class -> "tiny-row tiny-h50p",
+          'placeholder -> "E-mail",
+          'type -> "email")
+
+        @inputPassword(
+          formLogin("password"),
+          'class -> "tiny-row tiny-h50p",
+          'placeholder -> "Password")
+
+        <button class="btn login tiny-row tiny-h50p pr1 pl1" type="submit">Connexion</button>
+        <div class="inbl" style="line-height: 39px">
+          @helper.input(formLogin("rememberMe")) { (id, name, value, args) =>
+            <input type="checkbox" name="@name" id="@id" @toHtmlArgs(args)>
+            <label for="@id">Rester connecté</label>
+          }
+        </div>
+        <nav class="txtcenter">
+          <a href="@routes.Application.subscribe()">Pas encore inscrit? Cliquez ici!</a>
+        </nav>
+      }
+    </section>
+  </body>
+</html>

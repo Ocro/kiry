@@ -1,0 +1,111 @@
+@(formAddGame: Form[Kiry.AddNewGame], 
+  platformOptions: Seq[(String, String)],
+  defaultView: Boolean, 
+  ordoredView: Boolean)
+  
+@import helper._
+@implicitField = @{ FieldConstructor(helperformAddGame.f) }
+
+@main("Ajouter un jeu") {
+  <div class="new-game-main center w600p pam">
+    <div id="first-step">
+      <h5 class="mb1 phone-hidden">Pour commencer, entrez le nom du jeu à ajouter</h5>
+      <input type="text" id="searchGame" placeholder="Titre du jeu" class="tiny-h50p">
+      <div id="auto-fill">
+        <small><a href='javascript:goToStepTwo()'>vous pouvez aussi ajouter manuellement un jeu</a></small>
+      </div>
+    </div>
+
+    @helper.form(routes.Kiry.addNewGame, 'id -> "form-add-new-game") {
+      @if(formAddGame.hasGlobalErrors) {
+        <p class="error">
+          @formAddGame.globalError.message
+        </p>
+      }
+
+      <div id="input-extra-informations" class="desktop-hidden">
+        <nobr>
+          <h5 style="font-size: 50px; margin-bottom: 20px;" 
+              id="game-title-label"></h5>
+        </nobr>
+        <h5 class="phone-hidden mb1">
+          Complétez ou modifier les informations puis cliquez sur le bouton ajouter
+        </h5>
+
+        @inputText(
+          formAddGame("gameTitle"),
+          '_label -> "Titre du jeu",
+          'placeholder -> "Titre",
+          'type -> "text",
+          'autocomplete -> "off")
+
+        @inputText(
+          formAddGame("youtube"),
+          '_label -> "Lien d'une bande annonce youtube",
+          'placeholder -> "Youtube",
+          'type -> "text",
+          'autocomplete -> "off")
+
+        @inputText(
+          formAddGame("rating"),
+          '_label -> "Note (sur 100)",
+          'placeholder -> "Note",
+          'type -> "number")
+
+        @helper.input(
+          formAddGame("releaseDate"), 
+          '_label -> "Date de sortie") { (id, name, value, args) =>
+          <input  type="date" 
+                  name="@name" 
+                  id="@id" 
+                  @toHtmlArgs(args) 
+                  placeholder="Date de sortie">
+        }
+
+        <label for="platform">Plateforme</label>
+        <div class="wrap-platform flex flex-h">
+          @views.html.selectPlatforms(formAddGame, "platform", platformOptions)
+          <a id="link-update-platforms"
+             href="javascript:updatePlatforms();"
+             title="Cliquez ici pour mettre à jour la liste des plateformes disponibles.">
+           </a>
+        </div>
+
+        @inputText(
+          formAddGame("tag-genres"),
+          '_label -> "Genres (plusieurs possibles)",
+          'placeholder -> "Genres",
+          'class -> "tagManager",
+          'autocomplete -> "off")
+
+        <div class="wrap-compagnies flex flex-h">
+          <div>
+            @inputText(
+              formAddGame("developer"), 
+              '_label -> "Développeur",
+              'placeholder -> "Developpeur", 
+              'autocomplete -> "off", 
+              'class -> "compagnies")
+          </div>
+          <div>
+            @inputText(
+              formAddGame("publisher"),
+              '_label -> "Éditeur", 
+              'placeholder -> "Editeur", 
+              'autocomplete -> "off", 
+              'class -> "compagnies")
+          </div>
+        </div>
+
+        @inputText(formAddGame("idGameDb"), 'type -> "hidden", '_label -> "")
+
+        <section class="flex flex-h new-game-button">
+          <a href="javascript:backToStepOne()">changer de jeu</a>
+          <a href="javascript:submitform('form-add-new-game')">Ajouter</a>
+          <a href="@routes.Kiry.index(2)">Annuler</a>
+        </section>
+      </div>
+    }
+  </div>
+}
+<script src='@routes.Assets.at("javascripts/newgame.js")' type='text/javascript'></script>

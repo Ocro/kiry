@@ -1,0 +1,19 @@
+@(game: Game,
+  listGameWishes: List[Game])
+
+@if(listGameWishes.length > 0) {
+<section class="quick-view-game-menu flex flex-v" id="list-game-wishes">
+  <h1>Voulez-vous toujours ces jeux?</h1>
+  @listGameWishes.map { game =>
+    <div class="quick-view-game" id-game="@game.id">
+      <a href="@routes.Kiry.gameDetails(game.id)" title="@game.gametitle - @game.platform.name">@game.gametitle</a>
+      <a href="javascript:actionPostGame(document.getElementById('list-game-wishes'), '@routes.Kiry.updateWishFrom()', '@Kiry.getLoggedUser().email', @game.id)" title="je veux toujours ce jeu">oui</a>
+      <span class="icon icon-bull"></span>
+      <a href="javascript:actionGame(document.getElementById('list-game-wishes'), '@routes.Kiry.archivedGame(Kiry.getLoggedUser().email, game.id)', @game.id)" title="archivé le jeu">non</a>
+      <span class="icon icon-bull"></span>
+      <a href="javascript:actionGame(document.getElementById('list-game-wishes'), '@routes.Kiry.addOwnGame(Kiry.getLoggedUser().email, game.id)', @game.id)" title="j'ai acheté ce jeu">je l'ai</a>
+      <nav class="close-btn"></nav>
+    </div>
+  }
+</section>
+}

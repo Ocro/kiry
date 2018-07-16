@@ -1,0 +1,48 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Login
+GET     /login                           controllers.Application.login()
+POST    /login                           controllers.Application.authenticate()
+GET     /newAccount                      controllers.Application.subscribe()
+POST    /newAccount                      controllers.Application.createAccount()
+GET     /logout                          controllers.Application.logout()
+
+# Kiry
+GET     /                                controllers.Kiry.index(list : Integer = 0)
+GET     /home/1/archived                 controllers.Kiry.index(list : Integer = 5)
+GET     /home/:list                      controllers.Kiry.index(list : Integer)
+GET     /welcome                         controllers.Kiry.welcome()
+GET     /addNewGame                      controllers.Kiry.newgame()
+POST    /addNewGame                      controllers.Kiry.addNewGame()
+GET     /addWishGame/:email/:game        controllers.Kiry.addWishGame(email, game: Long)
+GET     /addOwnGame/:email/:game         controllers.Kiry.addOwnGame(email, game: Long)
+GET     /addIgnoredGame/:email/:game     controllers.Kiry.addIgnoredGame(email, game: Long)
+GET     /removeWishGame/:email/:game     controllers.Kiry.removeWishGame(email, game: Long)
+GET     /removeOwnGame/:email/:game      controllers.Kiry.removeOwnGame(email, game: Long)
+GET     /removeIgnoredGame/:email/:game  controllers.Kiry.removeIgnoredGame(email, game: Long)
+GET     /archivedGamed/:email/:game      controllers.Kiry.archivedGame(email, game: Long)
+GET     /removearchived/:email/:game     controllers.Kiry.removearchived(email, game: Long)
+POST    /getGameList                     controllers.Kiry.getGameList()
+GET     /getGameInfo/:game               controllers.Kiry.getGameInfo(game)
+GET     /importPlatform                  controllers.Kiry.importPlatform()
+GET     /importFront                     controllers.Kiry.importFront()
+GET     /importFanart                    controllers.Kiry.importFanart()
+GET     /importScreenShot                controllers.Kiry.importScreenShot()
+GET     /getGenresList                   controllers.Kiry.getGenresList()
+GET     /getCompagniesList               controllers.Kiry.getCompagniesList()
+GET     /setDefaultView/:enable          controllers.Kiry.setDefaultView(enable: Boolean)
+GET     /setOrdoredView/:enable          controllers.Kiry.setOrdoredView(enable: Boolean)
+GET     /gameDetails/:id                 controllers.Kiry.gameDetails(id: Long)
+GET     /gameDetails/db/:id              controllers.Kiry.gameDetailsDb(id: Long)
+POST    /uploadBoxArt                    controllers.Kiry.uploadBoxArt()
+POST    /updateWishFrom                  controllers.Kiry.updateWishFrom()
+
+#Administration
+GET     /admin                           controllers.Administration.index()
+POST    /cleanGame                       controllers.Administration.cleanGame() 
+
+#Ressources
+GET     /files/*file                     controllers.FileService.getFile(file: String)
+GET     /assets/*file                    controllers.Assets.at(path="/public", file)

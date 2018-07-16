@@ -1,0 +1,11 @@
+@(user: User, defaultView: Boolean, ordoredView: Boolean)
+
+@main("Welcome") {
+<h1>Bienvenue @user.name</h1>
+<p>
+    Kiry nique tout t'entends bien ça!?
+</p>
+<p>
+<a class="big-text" href="@routes.Kiry.index(2)">Commencer à utiliser Kiry!</a>
+</p>
+}

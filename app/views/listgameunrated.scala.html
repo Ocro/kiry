@@ -1,0 +1,19 @@
+@(game: Game,
+  listGamesWithoutState: List[Game])
+
+@if(listGamesWithoutState.length > 0) {
+<section class="quick-view-game-menu flex flex-v" id="list-game-unrated">
+  <h1>Donnez votre avis</h1>
+  @listGamesWithoutState.map { game =>
+    <div class="quick-view-game" id-game="@game.id">
+      <a href="@routes.Kiry.gameDetails(game.id)" title="@game.gametitle - @game.platform.name">@game.gametitle</a>
+      <a href="javascript:actionGame(document.getElementById('list-game-unrated'), '@routes.Kiry.addOwnGame(Kiry.getLoggedUser().email, game.id)', @game.id)" title="ajouter aux possessions">j'ai</a>
+      <span class="icon icon-bull"></span>
+      <a href="javascript:actionGame(document.getElementById('list-game-unrated'), '@routes.Kiry.addWishGame(Kiry.getLoggedUser().email, game.id)', @game.id)" title="ajouter aux désirs">je veux</a>
+      <span class="icon icon-bull"></span>
+      <a href="javascript:actionGame(document.getElementById('list-game-unrated'), '@routes.Kiry.addIgnoredGame(Kiry.getLoggedUser().email, game.id)', @game.id)" title="ajouter aux ignorés">m'en fou</a>
+      <nav class="close-btn"></nav>
+    </div>
+  }
+</section>
+}
