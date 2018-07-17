@@ -8,7 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import play.db.ebean.Model;
+import io.ebean.*;
 
 @Entity
 @Table(name = "configuration")
@@ -26,8 +26,7 @@ public class Configuration extends Model {
     this.account_email = account_email;
   }
 
-  public static Model.Finder<Short, Configuration> find = new Finder<Short, Configuration>(
-      Short.class, Configuration.class);
+  public static Finder<Short, Configuration> find = new Finder<>(Configuration.class);
 
   public static List<Configuration> findAll() {
     return find.all();

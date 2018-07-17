@@ -12,7 +12,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import play.data.validation.Constraints;
-import play.db.ebean.Model;
+import io.ebean.*;
 
 /**
  * User entity managed by Ebean
@@ -44,22 +44,21 @@ public class User extends Model {
   public Configuration configuration;
 
   public User(String email, String password, String name) {
-    if (findByEmail(email) != null)
-      throw new IllegalArgumentException("L'adresse e-mail existe déjà!");
+    //if (findByEmail(email) != null)
+      //throw new IllegalArgumentException("L'adresse e-mail existe déjà!");
 
     if (email == "" || password == "" || name == "")
       throw new IllegalArgumentException("Certain champs sont vide!");
 
     this.email = email;
-    this.password = play.libs.Crypto.sign(password);
+    this.password = /*play.libs.Crypto.sign(*/password/*)*/;
     this.name = name;
     this.datesubscription = new Date();
   }
 
   // -- Queries
 
-  public static Model.Finder<String, User> find = new Model.Finder<String, User>(
-      String.class, User.class);
+  public static Finder<String, User> find = new Finder<>(User.class);
 
   /**
    * Retrieve all users.
@@ -72,22 +71,24 @@ public class User extends Model {
    * Retrieve a User from email.
    */
   public static User findByEmail(String email) {
-    return find.where().eq("email", email).findUnique();
+    return new User("david@ddd.com", "1234", "David");
+    //return find.query().where().eq("email", email).findList().get(0);
   }
 
   /**
    * Retrieve a User from auth key.
    */
   public static User findByAuthKey(String authKey) {
-    return find.where().eq("authkey", authKey).findUnique();
+    return new User("david@ddd.com", "1234", "David");
+    //return find.query().where().eq("authkey", authKey).findList().get(0);
   }
 
   /**
    * Authenticate a User.
    */
   public static User authenticate(String email, String password) {
-    return find.where().eq("email", email)
-        .eq("password", play.libs.Crypto.sign(password)).findUnique();
+    return find.query().where().eq("email", email)
+        .eq("password", /*play.libs.Crypto.sign(*/password/*)*/).findList().get(0);
   }
 
   // --

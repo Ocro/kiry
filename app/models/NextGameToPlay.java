@@ -15,7 +15,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import play.data.validation.Constraints;
-import play.db.ebean.Model;
+import io.ebean.*;
 import utils.ContainGame;
 import controllers.Kiry;
 
@@ -84,8 +84,7 @@ public class NextGameToPlay extends Model implements ContainGame {
 
   // -- Queries
 
-  public static Model.Finder<NextGameToPlayKeys, NextGameToPlay> find = new Finder<NextGameToPlayKeys, NextGameToPlay>(
-      NextGameToPlayKeys.class, NextGameToPlay.class);
+  public static Finder<NextGameToPlayKeys, NextGameToPlay> find = new Finder<>(NextGameToPlay.class);
 
   public static List<NextGameToPlay> findAll() {
     return find.all();
@@ -97,16 +96,16 @@ public class NextGameToPlay extends Model implements ContainGame {
   }
 
   public static List<NextGameToPlay> findUserGames(String email) {
-    return find.where().eq("account.email", email)
+    return find.query().where().eq("account.email", email)
         .orderBy("game.platform.name, game.gametitle").findList();
   }
 
   public static NextGameToPlay findById(NextGameToPlayKeys id) {
-    return find.where().eq("id", id).findUnique();
+    return find.query().where().eq("id", id).findList().get(0);
   }
 
   public static boolean contains(String email, long game) {
-    return find.where().eq("account.email", email).where().eq("game.id", game)
+    return find.query().where().eq("account.email", email).where().eq("game.id", game)
         .findList().size() > 0;
   }
 

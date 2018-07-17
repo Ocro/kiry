@@ -32,7 +32,8 @@ updateGameList = function() {
   $("#auto-fill").html('<div class="phone-hidden mt1"><h5 style="display: inline;">Puis choisissez le jeu dans la liste</h5></div><ul class="list-game flex" id="list-search-games"></ul>');
 
   showLoading();
-  var link = "/getGameList/" + gameTitle;
+  //var link = "/getGameList/" + gameTitle;
+  var link = "/getGameList";
   $.get(link, function(data) {
     var baseImgUrl = $(data).find("baseImgUrl").text();
     $(data).find("game").each(function() {

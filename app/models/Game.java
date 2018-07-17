@@ -14,11 +14,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import play.data.validation.Constraints;
-import play.db.ebean.Model;
+import io.ebean.*;
 import utils.ContainGame;
-
-import com.avaje.ebean.Ebean;
-import com.avaje.ebean.Expr;
 
 @Entity
 @Table(name = "game")
@@ -73,42 +70,41 @@ public class Game extends Model implements ContainGame {
 
   // -- Queries
 
-  public static Model.Finder<Long, Game> find = new Model.Finder<Long, Game>(
-      Long.class, Game.class);
+  public static final Finder<Long, Game> find = new Finder(Game.class);
   
   public static List<Game> findByName(String name) {
-    return find.where().icontains("gametitle", name)
+    return find.query().where().icontains("gametitle", name)
         .orderBy("gametitle").findList();
   }
 
   public static List<Game> findAll() {
-    return find.fetch("developer").fetch("publisher")
+    return find.query().fetch("developer").fetch("publisher")
         .orderBy("platform.name, gametitle").findList();
   }
 
   public static Game findById(Long id) {
-    return find.fetch("developer").fetch("publisher").where().eq("id", id)
-        .findUnique();
+    return find.query().fetch("developer").fetch("publisher").where().eq("id", id)
+        .findList().get(0);
   }
 
   public static Game findByIdGameDb(Long idGameDb) {
-    return find.fetch("developer").fetch("publisher").where()
-        .eq("idgamedb", idGameDb).findUnique();
+    return find.query().fetch("developer").fetch("publisher").where()
+        .eq("idgamedb", idGameDb).findList().get(0);
   }
 
   public static List<Game> findGameWithoutState(String email) {
     List<Game> result = findAll();
-    result.removeAll(find.fetch("userwishgames").where()
+    result.removeAll(find.query().fetch("userwishgames").where()
         .eq("userwishgames.account.email", email).findList());
-    result.removeAll(find.fetch("userowngames").where()
+    result.removeAll(find.query().fetch("userowngames").where()
         .eq("userowngames.account.email", email).findList());
-    result.removeAll(find.fetch("usergamenotinterrested").where()
+    result.removeAll(find.query().fetch("usergamenotinterrested").where()
         .eq("usergamenotinterrested.account.email", email).findList());
     return result;
   }
 
   public static List<Game> getOldUserWishGames(String email) {
-    return find
+    return find.query()
         .fetch("userwishgames")
         .where()
         .conjunction()
@@ -123,38 +119,38 @@ public class Game extends Model implements ContainGame {
 
   public static List<Game> getOldUserWishGames(String email, long except) {
     List<Game> result = getOldUserWishGames(email);
-    result.removeAll(find.where().eq("account_email", email).where()
+    result.removeAll(find.query().where().eq("account_email", email).where()
         .eq("id", except).findList());
     return result;
   }
 
   public static List<Game> getUserWishGames(String email) {
-    return find.fetch("userwishgames").where()
+    return find.query().fetch("userwishgames").where()
         .eq("userwishgames.account.email", email).findList();
   }
 
   public static List<Game> getUserWishGames(String email, long except) {
     List<Game> result = getUserWishGames(email);
-    result.removeAll(find.where().eq("account_email", email).where()
+    result.removeAll(find.query().where().eq("account_email", email).where()
         .eq("id", except).findList());
     return result;
   }
 
   public static List<Game> getUserOwnGames(String email) {
-    return find.fetch("userowngames").where()
+    return find.query().fetch("userowngames").where()
         .eq("userowngames.account.email", email).findList();
   }
 
   public static List<Game> getUserOwnGames(String email, long except) {
     List<Game> result = getUserOwnGames(email);
-    result.removeAll(find.where().eq("account_email", email).where()
+    result.removeAll(find.query().where().eq("account_email", email).where()
         .eq("id", except).findList());
     return result;
   }
 
   public static List<Game> findGameWithoutState(String email, long except) {
     List<Game> result = findGameWithoutState(email);
-    result.removeAll(find.where().eq("account_email", email).where()
+    result.removeAll(find.query().where().eq("account_email", email).where()
         .eq("id", except).findList());
     return result;
   }
@@ -167,7 +163,7 @@ public class Game extends Model implements ContainGame {
   
   public static void cleanGameFrom(String fromEmail, long fromId) {
     Ebean.delete(
-        find.where().gt("id", fromId).eq("account_email", fromEmail).findList());
+        find.query().where().gt("id", fromId).eq("account_email", fromEmail).findList());
   }
 
   @Override

@@ -5,7 +5,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import play.data.validation.Constraints;
-import play.db.ebean.Model;
+import io.ebean.*;
 
 @Entity
 @Table(name = "admin")
@@ -19,10 +19,9 @@ public class Admin extends Model {
     this.email = email;
   }
   
-  public static Model.Finder<String, Admin> find = 
-      new Model.Finder<String, Admin>(String.class, Admin.class);
+  public static Finder<String, Admin> find = new Finder<>(Admin.class);
   
   public static boolean isAdmin(User user) {
-    return find.where().eq("email", user.email).findUnique() != null;
+    return find.query().where().eq("email", user.email).findList().get(0) != null;
   }
 }

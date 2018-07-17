@@ -15,10 +15,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import play.data.validation.Constraints;
-import play.db.ebean.Model;
 import utils.ContainGame;
 
-import com.avaje.ebean.Ebean;
+import io.ebean.*;
 
 import controllers.Kiry;
 
@@ -93,8 +92,7 @@ public class UserWishGame extends Model implements ContainGame {
 
   // -- Queries
 
-  public static Model.Finder<UserWishGameKeys, UserWishGame> find = new Finder<UserWishGameKeys, UserWishGame>(
-      UserWishGameKeys.class, UserWishGame.class);
+  public static Finder<UserWishGameKeys, UserWishGame> find = new Finder<>(UserWishGame.class);
 
   public static List<UserWishGame> findAll() {
     return find.all();
@@ -106,7 +104,7 @@ public class UserWishGame extends Model implements ContainGame {
   }
 
   public static List<UserWishGame> findUserGames(String email, boolean archived) {
-    return find.where().eq("account.email", email).where()
+    return find.query().where().eq("account.email", email).where()
         .eq("archived", archived).orderBy("game.platform.name, game.gametitle")
         .findList();
   }
@@ -116,12 +114,12 @@ public class UserWishGame extends Model implements ContainGame {
   }
 
   public static List<UserWishGame> findAllUserGames(String email) {
-    return find.where().eq("account.email", email)
+    return find.query().where().eq("account.email", email)
         .orderBy("game.platform.name, game.gametitle").findList();
   }
 
   public static UserWishGame findById(UserWishGameKeys id) {
-    return find.where().eq("id", id).findUnique();
+    return find.query().where().eq("id", id).findList().get(0);
   }
 
   public static void removeWishGame(String email, long game) {
@@ -139,12 +137,12 @@ public class UserWishGame extends Model implements ContainGame {
   }
 
   public static boolean contains(String email, long game) {
-    return find.where().eq("account.email", email).where().eq("game.id", game)
+    return find.query().where().eq("account.email", email).where().eq("game.id", game)
         .findList().size() > 0;
   }
 
   public static boolean isArchived(String email, long game) {
-    return find.where().eq("account.email", email).where().eq("game.id", game)
+    return find.query().where().eq("account.email", email).where().eq("game.id", game)
         .where().eq("archived", true).findList().size() > 0;
   }
 

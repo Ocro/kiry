@@ -10,8 +10,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import play.data.validation.Constraints;
-import play.db.ebean.Model;
-import com.avaje.ebean.Ebean;
+import io.ebean.*;
 
 @Entity
 @Table(name = "genre")
@@ -30,15 +29,14 @@ public class Genre extends Model {
     this.name = name;
   }
 
-  public static Model.Finder<Long, Genre> find = new Finder<Long, Genre>(
-      Long.class, Genre.class);
+  public static Finder<Long, Genre> find = new Finder<>(Genre.class);
 
   public static List<Genre> findAll() {
     return find.all();
   }
   
   public static Genre findByName(String name) {
-    return find.where().eq("name", name).findUnique();
+    return find.query().where().eq("name", name).findList().get(0);
   }
 
   public static List<String> getStringList() {

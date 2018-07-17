@@ -15,10 +15,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import play.data.validation.Constraints;
-import play.db.ebean.Model;
 import utils.ContainGame;
 
-import com.avaje.ebean.Ebean;
+import io.ebean.*;
 
 import controllers.Kiry;
 
@@ -85,8 +84,7 @@ public class UserGameNotInterrested extends Model implements ContainGame {
 
   // -- Queries
 
-  public static Model.Finder<UserGameNotInterrestedKeys, UserGameNotInterrested> find = new Model.Finder<UserGameNotInterrestedKeys, UserGameNotInterrested>(
-      UserGameNotInterrestedKeys.class, UserGameNotInterrested.class);
+  public static Finder<UserGameNotInterrestedKeys, UserGameNotInterrested> find = new Finder<>(UserGameNotInterrested.class);
 
   public static List<UserGameNotInterrested> findAll() {
     return find.all();
@@ -98,12 +96,12 @@ public class UserGameNotInterrested extends Model implements ContainGame {
   }
 
   public static List<UserGameNotInterrested> findUserGames(String email) {
-    return find.where().eq("account.email", email).orderBy("game.gametitle")
+    return find.query().where().eq("account.email", email).orderBy("game.gametitle")
         .findList();
   }
 
   public static UserGameNotInterrested findById(UserGameNotInterrestedKeys id) {
-    return find.where().eq("id", id).findUnique();
+    return find.query().where().eq("id", id).findList().get(0);
   }
 
   public static void removeNotInterrestedGame(String email, long game) {
@@ -114,7 +112,7 @@ public class UserGameNotInterrested extends Model implements ContainGame {
   }
 
   public static boolean contains(String email, long game) {
-    return find.where().eq("account.email", email).where().eq("game.id", game)
+    return find.query().where().eq("account.email", email).where().eq("game.id", game)
         .findList().size() > 0;
   }
 

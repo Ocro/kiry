@@ -10,7 +10,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import play.data.validation.Constraints;
-import play.db.ebean.Model;
+import io.ebean.*;
 
 @Entity
 @Table(name = "compagny")
@@ -31,8 +31,7 @@ public class Compagny extends Model {
     this.name = name;
   }
 
-  public static Model.Finder<Long, Compagny> find = new Model.Finder<Long, Compagny>(
-      Long.class, Compagny.class);
+  public static Finder<Long, Compagny> find = new Finder<>(Compagny.class);
 
   public static List<Compagny> findAll() {
     return find.all();

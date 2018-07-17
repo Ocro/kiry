@@ -1,27 +1,58 @@
 package controllers;
 
-import static play.data.Form.form;
 import models.User;
-import play.data.Form;
-import play.data.validation.Constraints;
-import play.mvc.Controller;
-import play.mvc.Http;
-import play.mvc.Result;
+import play.*;
+import play.data.*;
+import play.mvc.*;
 import views.html.login;
 import views.html.subscribe;
+import javax.inject.*;
+import play.data.validation.Constraints;
+import play.data.validation.Constraints;
+import play.data.validation.Constraints.Validate;
+import play.data.validation.Constraints.Validatable;
+
 
 public class Application extends Controller {
 
-  public static class Login {
+  @Inject FormFactory formFactory;
+
+  public static class Login implements Validatable<String>  {
 
     @Constraints.Required
-    public String email;
+    protected String email;
 
     @Constraints.Required
-    public String password;
+    protected String password;
 
     public boolean rememberMe;
-
+    
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    public String getEmail() {
+        return this.email;
+    }
+    
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
+    public String getPassword() {
+        return this.password;
+    }
+    
+    public boolean setRememberMe(boolean rememberMe) {
+        this.rememberMe = rememberMe;
+        return rememberMe;
+    }
+    
+    public boolean getRememberMe() {
+        return this.rememberMe;
+    }
+    
+    @Override
     public String validate() {
       if (User.authenticate(email, password) == null) {
         return "Informations incorrectes";
@@ -30,18 +61,51 @@ public class Application extends Controller {
     }
   }
 
-  public static class CreateAccount {
+  public static class CreateAccount implements Validatable<String> {
 
     @Constraints.Required
-    public String email;
+    protected String name;
 
     @Constraints.Required
-    public String password;
+    protected String email;
 
     @Constraints.Required
-    public String name;
-
+    protected String password;
+    
     public boolean rememberMeCreateAccount;
+    
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    public String getEmail() {
+        return this.email;
+    }
+    
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
+    public String getPassword() {
+        return this.password;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public String getName() {
+        return this.name;
+    }
+    
+    public boolean setRememberMeCreateAccount(boolean rememberMe) {
+        this.rememberMeCreateAccount = rememberMe;
+        return rememberMe;
+    }
+    
+    public boolean getRememberMeCreateAccount() {
+        return this.rememberMeCreateAccount;
+    }
 
     public String validate() {
       try {
@@ -60,11 +124,13 @@ public class Application extends Controller {
       authUser(User.findByAuthKey(rememberme.value()).email);
       return redirect(routes.Kiry.index(2));
     }
-    return ok(login.render(form(Login.class)));
+    return ok(login.render(formFactory.form(Login.class)));
   }
 
   public Result authenticate() {
-    Form<Login> loginForm = form(Login.class).bindFromRequest();
+  System.out.println("test");
+    Form<Login> loginForm = formFactory.form(Login.class).bindFromRequest();
+
     if (loginForm.hasErrors()) {
       return badRequest(login.render(loginForm));
     } else {
@@ -76,12 +142,11 @@ public class Application extends Controller {
   }
 
   public Result subscribe() {
-    return ok(subscribe.render(form(CreateAccount.class)));
+    return ok(subscribe.render(formFactory.form(CreateAccount.class)));
   }
 
   public Result createAccount() {
-    Form<CreateAccount> createAccountForm = form(CreateAccount.class)
-        .bindFromRequest();
+    Form<CreateAccount> createAccountForm = formFactory.form(CreateAccount.class).bindFromRequest();
     if (createAccountForm.hasErrors()) {
       return badRequest(subscribe.render(createAccountForm));
     } else {
@@ -99,8 +164,8 @@ public class Application extends Controller {
 
   private static void rememberMe(String email, String password) {
     String salt = Double.toString(Math.random() * 1000);
-    String cookie = play.libs.Crypto.sign(email + password + salt);
-    response().setCookie("rememberme", cookie, 2592000);
+    String cookie = /*play.libs.Crypto.sign(*/email + password + salt/*)*/;
+    response().setCookie("rememberme", cookie, 2592000, "user/passwd", "kiry.com", false, true, Http.Cookie.SameSite.STRICT);
     User u = User.findByEmail(email);
     u.authkey = cookie;
     u.save();

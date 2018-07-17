@@ -7,9 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import play.data.validation.Constraints;
-import play.db.ebean.Model;
 
-import com.avaje.ebean.Ebean;
+import io.ebean.*;
 
 @Entity
 @Table(name = "platform")
@@ -29,26 +28,25 @@ public class Platform extends Model {
 
   // -- Queries
 
-  public static Model.Finder<Long, Platform> find = new Finder<Long, Platform>(
-      Long.class, Platform.class);
+  public static Finder<Long, Platform> find = new Finder<>(Platform.class);
 
   /**
    * Retrieve all users.
    */
   public static List<Platform> findAll() {
-    return find.orderBy("name").findList();
+    return find.query().orderBy("name").findList();
   }
 
   public static Platform findById(Long id) {
-    return find.where().eq("id", id).findUnique();
+    return find.query().where().eq("id", id).findList().get(0);
   }
 
   public static Platform findByName(String name) {
-    return find.where().eq("name", name).findUnique();
+    return find.query().where().eq("name", name).findList().get(0);
   }
 
   public static Platform findByIdGameDb(Long id) {
-    return find.where().eq("idgamedb", id).findUnique();
+    return find.query().where().eq("idgamedb", id).findList().get(0);
   }
 
   public static void deleteAll() {

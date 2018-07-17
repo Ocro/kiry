@@ -4,45 +4,81 @@
 
 # Login
 GET     /login                           controllers.Application.login()
++ nocsrf
 POST    /login                           controllers.Application.authenticate()
++ nocsrf
 GET     /newAccount                      controllers.Application.subscribe()
++ nocsrf
 POST    /newAccount                      controllers.Application.createAccount()
++ nocsrf
 GET     /logout                          controllers.Application.logout()
 
 # Kiry
++ nocsrf
 GET     /                                controllers.Kiry.index(list : Integer = 0)
++ nocsrf
 GET     /home/1/archived                 controllers.Kiry.index(list : Integer = 5)
++ nocsrf
 GET     /home/:list                      controllers.Kiry.index(list : Integer)
++ nocsrf
 GET     /welcome                         controllers.Kiry.welcome()
++ nocsrf
 GET     /addNewGame                      controllers.Kiry.newgame()
++ nocsrf
 POST    /addNewGame                      controllers.Kiry.addNewGame()
++ nocsrf
 GET     /addWishGame/:email/:game        controllers.Kiry.addWishGame(email, game: Long)
++ nocsrf
 GET     /addOwnGame/:email/:game         controllers.Kiry.addOwnGame(email, game: Long)
++ nocsrf
 GET     /addIgnoredGame/:email/:game     controllers.Kiry.addIgnoredGame(email, game: Long)
++ nocsrf
 GET     /removeWishGame/:email/:game     controllers.Kiry.removeWishGame(email, game: Long)
++ nocsrf
 GET     /removeOwnGame/:email/:game      controllers.Kiry.removeOwnGame(email, game: Long)
++ nocsrf
 GET     /removeIgnoredGame/:email/:game  controllers.Kiry.removeIgnoredGame(email, game: Long)
++ nocsrf
 GET     /archivedGamed/:email/:game      controllers.Kiry.archivedGame(email, game: Long)
++ nocsrf
 GET     /removearchived/:email/:game     controllers.Kiry.removearchived(email, game: Long)
-POST    /getGameList                     controllers.Kiry.getGameList()
++ nocsrf
+GET    /getGameList                     controllers.Kiry.getGameList()
++ nocsrf
 GET     /getGameInfo/:game               controllers.Kiry.getGameInfo(game)
++ nocsrf
 GET     /importPlatform                  controllers.Kiry.importPlatform()
++ nocsrf
 GET     /importFront                     controllers.Kiry.importFront()
++ nocsrf
 GET     /importFanart                    controllers.Kiry.importFanart()
++ nocsrf
 GET     /importScreenShot                controllers.Kiry.importScreenShot()
++ nocsrf
 GET     /getGenresList                   controllers.Kiry.getGenresList()
++ nocsrf
 GET     /getCompagniesList               controllers.Kiry.getCompagniesList()
++ nocsrf
 GET     /setDefaultView/:enable          controllers.Kiry.setDefaultView(enable: Boolean)
++ nocsrf
 GET     /setOrdoredView/:enable          controllers.Kiry.setOrdoredView(enable: Boolean)
++ nocsrf
 GET     /gameDetails/:id                 controllers.Kiry.gameDetails(id: Long)
++ nocsrf
 GET     /gameDetails/db/:id              controllers.Kiry.gameDetailsDb(id: Long)
++ nocsrf
 POST    /uploadBoxArt                    controllers.Kiry.uploadBoxArt()
++ nocsrf
 POST    /updateWishFrom                  controllers.Kiry.updateWishFrom()
 
 #Administration
++ nocsrf
 GET     /admin                           controllers.Administration.index()
++ nocsrf
 POST    /cleanGame                       controllers.Administration.cleanGame() 
 
 #Ressources
++ nocsrf
 GET     /files/*file                     controllers.FileService.getFile(file: String)
++ nocsrf
 GET     /assets/*file                    controllers.Assets.at(path="/public", file)

@@ -1,7 +1,5 @@
 package controllers;
 
-import static play.data.Form.form;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -15,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import javax.inject.*;
 
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -39,14 +38,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import play.data.DynamicForm;
-import play.data.Form;
+import play.*;
+import play.data.*;
+import play.mvc.*;
 import play.data.validation.Constraints;
-import play.mvc.Controller;
-import play.mvc.Http;
-import play.mvc.Http.MultipartFormData.FilePart;
-import play.mvc.Result;
-import play.mvc.Security;
 import scala.Tuple2;
 import scala.collection.Seq;
 import utils.ContainGame;
@@ -65,6 +60,8 @@ import webDownloader.WebContentDownloader;
 
 @Security.Authenticated(Secured.class)
 public class Kiry extends Controller {
+
+  @Inject FormFactory formFactory;
 
   public static final String SEPARATOR = System.getProperty("file.separator");
   public static final String GAMES_FOLDER = "public" + SEPARATOR + "images"
@@ -239,12 +236,12 @@ public class Kiry extends Controller {
   }
 
   public Result newgame() {
-    return ok(newgame.render(form(AddNewGame.class), getPlatformOptions(),
+    return ok(newgame.render(formFactory.form(AddNewGame.class), getPlatformOptions(),
         getDefaultView(), getOrdoredView()));
   }
 
   public Result addNewGame() {
-    Form<AddNewGame> addNewGame = form(AddNewGame.class).bindFromRequest();
+    Form<AddNewGame> addNewGame = formFactory.form(AddNewGame.class).bindFromRequest();
     if (addNewGame.hasErrors()) {
       return badRequest(newgame.render(addNewGame, getPlatformOptions(),
           getDefaultView(), getOrdoredView()));
@@ -280,12 +277,12 @@ public class Kiry extends Controller {
   }
 
   public Result setDefaultView(Boolean enable) {
-    response().setCookie("defaultView", String.valueOf(enable), 2592000);
+    response().setCookie("defaultView", String.valueOf(enable), 2592000, "user/view/default", "kiry.com", false, true, Http.Cookie.SameSite.STRICT);
     return redirectReferer();
   }
 
   public Result setOrdoredView(Boolean enable) {
-    response().setCookie("ordoredView", String.valueOf(enable), 2592000);
+    response().setCookie("ordoredView", String.valueOf(enable), 2592000, "user/view/order", "kiry.com", false, true, Http.Cookie.SameSite.STRICT);
     return redirectReferer();
   }
 
@@ -450,10 +447,13 @@ public class Kiry extends Controller {
   }
 
   public Result getGameList() {
-    Map<String, String[]> datas = request().body().asFormUrlEncoded();
+    /*Map<String, String[]> datas = request().body().asFormUrlEncoded();
     Document doc = null;
     String search = datas.get("search")[0],
-           searchLocal = search.trim().replace(' ', '%');
+           searchLocal = search.trim().replace(' ', '%');*/
+    Document doc = null;
+    String searchLocal;
+    String search = searchLocal = "golden";
     
     try {
       search = URLEncoder.encode(search, "UTF-8").replace(" ", "+");
@@ -621,7 +621,7 @@ public class Kiry extends Controller {
       Document document = docBuilder.parse(PREFIX_GET_PLATFORMS);
       importDocument(document.getDocumentElement());
 
-      return ok(selectPlatforms.render(form(AddNewGame.class), "platform",
+      return ok(selectPlatforms.render(formFactory.form(AddNewGame.class), "platform",
           getPlatformOptions()));
     } catch (Exception e) {
       System.out.println(e);
@@ -764,11 +764,11 @@ public class Kiry extends Controller {
   public Result uploadBoxArt() {
     Http.MultipartFormData multipartFormData = request().body()
         .asMultipartFormData();
-    FilePart picture = multipartFormData.getFile("file");
-    String id = multipartFormData.asFormUrlEncoded().get("id")[0];
+    Http.MultipartFormData.FilePart picture = multipartFormData.getFile("file");
+    String id = (String)multipartFormData.asFormUrlEncoded().get("id");
 
     if (picture != null) {
-      File file = picture.getFile();
+      File file = (File)picture.getFile();
 
       if (file.length() > 80000) {
         flash("error", "File is too big");
@@ -795,7 +795,7 @@ public class Kiry extends Controller {
   }
 
   public Result updateWishFrom() {
-    DynamicForm requestData = form().bindFromRequest();
+    DynamicForm requestData = formFactory.form().bindFromRequest();
 
     String email = requestData.get("email");
     Long idGame = Long.parseLong(requestData.get("idGame"));
